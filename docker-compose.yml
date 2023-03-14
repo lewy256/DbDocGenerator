@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    build: ./Db
+    ports:
+      - 1582:1433
+  app:
+    build: ./App
+    ports:
+      - 5001:80
+    depends_on:
+      - db

@@ -1,0 +1,36 @@
+﻿@{
+    var type = @Model.GetType().GetGenericArguments()[1];
+}
+<p class="d-print-none">
+    <a href="/@type.Name/Create">Create new record</a>
+</p>
+<table class="table table-sm table-bordered table-striped caption-top">
+    <caption>@type.Name</caption> 
+    <thead class="table-dark">
+        <tr>
+            @foreach (var prop in type.GetProperties()) {
+                <th>
+                    @prop.Name
+                </th>
+            }
+            <th class="d-print-none"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                @foreach (var prop in type.GetProperties()) {
+                    <td>
+                        @prop.GetValue(item.Value)
+
+                    </td>
+                }
+                <td class="d-print-none">
+                    <a href="/@type.Name/Edit/@item.Key">Edit</a> |
+                    <a href="/@type.Name/Delete/@item.Key">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

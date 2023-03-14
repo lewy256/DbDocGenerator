@@ -1,0 +1,28 @@
+﻿@{
+    var type = @Model.GetType();
+}
+<h1>Create</h1>
+<h4>@type.Name</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" asp-controller="@type.Name">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @foreach (var prop in type.GetProperties()) {
+                <div class="form-group">
+                    <label for="@prop.Name">@prop.Name</label><br>
+                    <input type="text" id="@prop.Name" name="@prop.Name"/><br>
+              
+                </div>
+            }
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<div>
+    <a asp-action="Index" asp-controller="Home">Back to List</a>
+</div>

@@ -1,0 +1,126 @@
+﻿@using DbDocGenerator.Models.Tables
+@model DbDocGenerator.ViewModels.HomeVeiwModel
+<div class="d-print-none">
+    <div class="text-center">
+        <p>You can print now <a href="/Home/Print">Print</a></p>
+    </div>
+</div>
+<div class="center d-none d-print-block">
+    <h2>DATABASE DOCUMENTATION</h2>
+    <br>
+    <p>Server: @Model.DbInfo.FirstOrDefault().Value.ServerName</p>
+    <p>Database: @Model.DbInfo.FirstOrDefault().Value.DatabaseName</p>
+    <p>Author: @Model.DbInfo.FirstOrDefault().Value.UserName</p>
+    <p>Created: @Model.DbInfo.FirstOrDefault().Value.CurrentDate</p>
+</div>
+<div class="row mb-3 text-center d-print-none">
+        <h2 class="text-center">DATABASE DOCUMENTATION</h2>
+        <div class="col-md-4 themed-grid-col"></div>
+        <div class="col-md-4 themed-grid-col">
+      
+        <br>
+            <p class="text-start">Server: @Model.DbInfo.FirstOrDefault().Value.ServerName</p>
+            <p class="text-start">Database: @Model.DbInfo.FirstOrDefault().Value.DatabaseName</p>
+            <p class="text-start">Author: @Model.DbInfo.FirstOrDefault().Value.UserName</p>
+            <p class="text-start">Created: @Model.DbInfo.FirstOrDefault().Value.CurrentDate</p>
+        </div>
+        <a href="/DbInfo/Edit/@Model.DbInfo.Keys.FirstOrDefault()">Edit</a>
+        <div class="col-md-4 themed-grid-col"></div>
+    </div>
+<p style="page-break-after: always;">&nbsp;</p>
+<h2 class="toc_title">Contents</h2>
+<a class="d-print-none" href="/TableOfContent/CreateTitle">Create title</a>
+<ol class="toc-list" role="list">
+    @{
+        int j = 0;
+    }
+    @foreach (var item in Model.TableOfContents) {
+        j++;
+        <li>
+            <a href="#@item.Value.Title">
+                <span class="title">
+                    @j. @item.Value.Title
+                    <span class="leaders" aria-hidden="true"></span>
+                </span>
+                <span class="page">
+                    @item.Value.PageNumber
+                    <span class="visually-hidden">Page&nbsp;</span>
+                </span>
+            </a>
+            <div class="d-inline d-print-none">
+                <a href="/TableOfContent/EditTitle/@item.Key">Edit</a>|
+                <a href="/TableOfContent/DeleteTitle/@item.Key">Delete</a>|
+                <a href="/TableOfContent/CreateSubtitle/@item.Key">Create subtitle</a>
+            </div>
+            <ol role="list">
+                @{
+                    int k = 0;
+                }
+                @foreach (var table in item.Value.Subtitles) {
+                    k++;
+                    <li>
+                        <a href="#@table.Value.SubTitle">
+                            <span class="title">@j.@k. @table.Value.SubTitle<span class="leaders" aria-hidden="true"></span></span>
+                            <span class="page">
+                                @table.Value.PageNumber
+                                <span class="visually-hidden">Page&nbsp;</span>
+                            </span>
+                        </a>
+                        <div class="d-inline d-print-none">
+                            <a href="/TableOfContent/EditSubtitle/@item.Key/@table.Key">Edit</a>|
+                            <a href="/TableOfContent/DeleteSubtitle/@item.Key/@table.Key">Delete</a>
+                        </div>
+                    </li>
+                }
+            </ol>
+        </li>
+    }
+</ol>
+<p style="page-break-after: always;">&nbsp;</p>
+<h2 class="text-center" id="Database properties">Database properties</h2>
+<partial name="Table" model=@Model.DbProperties />
+<br />
+<h2 class="text-center" id="Tables">Tables</h2>
+<partial name="Table" model=@Model.TableDescriptions />
+<p style="page-break-after: always;">&nbsp;</p>
+@foreach (var item in @Model.TableDescriptions) {
+    <h2 id="@item.Value.TableName">@item.Value.TableName</h2>
+    <partial name="Table" model=@Model.ColumnDescriptions.Where(x => x.Value.TableName == item.Value.TableName).ToDictionary(x=>x.Key,x=>x.Value)/>
+    <partial name="Table" model=@Model.PrimaryKeys.Where(x => x.Value.TableName == item.Value.TableName).ToDictionary(x=>x.Key,x=>x.Value) />
+    <partial name="Table" model=@Model.ForeignKeys.Where(x => x.Value.ForeignKeyTableName == item.Value.TableName).ToDictionary(x=>x.Key,x=>x.Value)/>
+    <partial name="Table" model=@Model.Indexes.Where(x => x.Value.TableName == item.Value.TableName).ToDictionary(x=>x.Key,x=>x.Value) />
+    <br/>
+}
+<h2 class="text-center" id="Functions">Functions</h2>
+<partial name="Table" model=@Model.Functions />
+<h2 class="text-center" id="Triggers">Triggers</h2>
+<partial name="Table" model=@Model.Triggers />
+<br>
+@foreach (var item in Model.DataTables) {
+    <h2 class="text-center" id="@item.Value.TableName">@item.Value.TableName</h2>
+    <partial name="DataTable" model=@item.Value />
+    <a href="/Home/Delete/@item.Key" class="d-print-none">Delete table</a>
+}
+<br>
+<h2 class="d-print-none">Create table</h2>
+<div class="row d-print-none">
+    <div class="col-md-4">
+        <form method="post" action="/Home/List">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Query" class="control-label"></label>
+                <input asp-for="Query" class="form-control" />
+                <span asp-validation-for="Query" class="text-danger"></span>
+
+                <label asp-for="TableName" class="control-label"></label>
+                <input asp-for="TableName" class="form-control" />
+                <span asp-validation-for="TableName" class="text-danger"></span>
+            </div>
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<br>
