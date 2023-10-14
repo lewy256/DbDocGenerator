@@ -10,3 +10,12 @@ Experimental purpose only
 ```
 docker compose up
 ```
+
+<h3 align="center">Screenshots</h3>
+<p align="center">
+  <img src=https://github.com/lewy256/DbDocGenerator/blob/master/img/2.png width="70%">
+  <img src=https://github.com/lewy256/DbDocGenerator/blob/master/img/3.png width="70%">
+</p>
+
+
+
